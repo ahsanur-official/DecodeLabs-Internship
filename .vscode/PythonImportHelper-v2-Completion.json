@@ -1,0 +1,83 @@
+[
+    {
+        "label": "add_task",
+        "kind": 2,
+        "importPath": "Week 1.todo",
+        "description": "Week 1.todo",
+        "peekOfCode": "def add_task():\n    global task_id\n    task_name = input(\"\\nEnter Task Name: \").strip()\n    if not task_name:\n        print(\"❌ Task cannot be empty!\")\n        return\n    task = {\n        \"id\": task_id,\n        \"name\": task_name,\n        \"status\": \"Pending\"",
+        "detail": "Week 1.todo",
+        "documentation": {}
+    },
+    {
+        "label": "view_tasks",
+        "kind": 2,
+        "importPath": "Week 1.todo",
+        "description": "Week 1.todo",
+        "peekOfCode": "def view_tasks():\n    print(\"\\n\" + \"=\" * 60)\n    print(\"                    TASK LIST\")\n    print(\"=\" * 60)\n    if not tasks:\n        print(\"No tasks available.\")\n        return\n    print(f\"{'ID':<5}{'Task Name':<35}{'Status'}\")\n    print(\"-\" * 60)\n    for task in tasks:",
+        "detail": "Week 1.todo",
+        "documentation": {}
+    },
+    {
+        "label": "complete_task",
+        "kind": 2,
+        "importPath": "Week 1.todo",
+        "description": "Week 1.todo",
+        "peekOfCode": "def complete_task():\n    if not tasks:\n        print(\"\\nNo tasks available.\")\n        return\n    view_tasks()\n    try:\n        task_id_input = int(\n            input(\"\\nEnter Task ID to mark as completed: \")\n        )\n        for task in tasks:",
+        "detail": "Week 1.todo",
+        "documentation": {}
+    },
+    {
+        "label": "delete_task",
+        "kind": 2,
+        "importPath": "Week 1.todo",
+        "description": "Week 1.todo",
+        "peekOfCode": "def delete_task():\n    if not tasks:\n        print(\"\\nNo tasks available.\")\n        return\n    view_tasks()\n    try:\n        task_id_input = int(\n            input(\"\\nEnter Task ID to delete: \")\n        )\n        for task in tasks:",
+        "detail": "Week 1.todo",
+        "documentation": {}
+    },
+    {
+        "label": "show_summary",
+        "kind": 2,
+        "importPath": "Week 1.todo",
+        "description": "Week 1.todo",
+        "peekOfCode": "def show_summary():\n    total = len(tasks)\n    completed = sum(\n        1 for task in tasks\n        if task[\"status\"] == \"Completed\"\n    )\n    pending = total - completed\n    print(\"\\n\" + \"=\" * 40)\n    print(\"TASK SUMMARY\")\n    print(\"=\" * 40)",
+        "detail": "Week 1.todo",
+        "documentation": {}
+    },
+    {
+        "label": "display_menu",
+        "kind": 2,
+        "importPath": "Week 1.todo",
+        "description": "Week 1.todo",
+        "peekOfCode": "def display_menu():\n    print(\"\\n\" + \"=\" * 60)\n    print(\"           TO-DO LIST MANAGEMENT SYSTEM\")\n    print(\"=\" * 60)\n    print(\"1. Add Task\")\n    print(\"2. View Tasks\")\n    print(\"3. Mark Task as Completed\")\n    print(\"4. Delete Task\")\n    print(\"5. Show Summary\")\n    print(\"6. Exit\")",
+        "detail": "Week 1.todo",
+        "documentation": {}
+    },
+    {
+        "label": "main",
+        "kind": 2,
+        "importPath": "Week 1.todo",
+        "description": "Week 1.todo",
+        "peekOfCode": "def main():\n    while True:\n        display_menu()\n        choice = input(\"Enter your choice (1-6): \").strip()\n        if choice == \"1\":\n            add_task()\n        elif choice == \"2\":\n            view_tasks()\n        elif choice == \"3\":\n            complete_task()",
+        "detail": "Week 1.todo",
+        "documentation": {}
+    },
+    {
+        "label": "tasks",
+        "kind": 5,
+        "importPath": "Week 1.todo",
+        "description": "Week 1.todo",
+        "peekOfCode": "tasks = []\ntask_id = 1\ndef add_task():\n    global task_id\n    task_name = input(\"\\nEnter Task Name: \").strip()\n    if not task_name:\n        print(\"❌ Task cannot be empty!\")\n        return\n    task = {\n        \"id\": task_id,",
+        "detail": "Week 1.todo",
+        "documentation": {}
+    },
+    {
+        "label": "task_id",
+        "kind": 5,
+        "importPath": "Week 1.todo",
+        "description": "Week 1.todo",
+        "peekOfCode": "task_id = 1\ndef add_task():\n    global task_id\n    task_name = input(\"\\nEnter Task Name: \").strip()\n    if not task_name:\n        print(\"❌ Task cannot be empty!\")\n        return\n    task = {\n        \"id\": task_id,\n        \"name\": task_name,",
+        "detail": "Week 1.todo",
+        "documentation": {}
+    }
+]
