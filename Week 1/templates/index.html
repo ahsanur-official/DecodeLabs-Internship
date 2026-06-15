@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DecodeLabs To-Do List | Python Web</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div class="app-container">
+        <div class="header">
+            <h1>To-Do List App</h1>
+            <p>DecodeLabs Project 1 | Powered by Python & Flask</p>
+        </div>
+
+        <div class="summary-box">
+            <div class="summary-item">Total <br><span>{{ total }}</span></div>
+            <div class="summary-item">Completed <br><span>{{ completed }}</span></div>
+            <div class="summary-item">Pending <br><span>{{ pending }}</span></div>
+        </div>
+
+        <div class="action-bar">
+            <a href="{{ url_for('clear_completed') }}" class="btn-clear" style="text-decoration: none;">✨ Clear Completed</a>
+        </div>
+
+        <form action="{{ url_for('add_task') }}" method="POST" class="input-group">
+            <input type="text" name="task_name" placeholder="Enter Task Name..." required>
+            <select name="task_priority">
+                <option value="Low">Low Priority</option>
+                <option value="Medium" selected>Med Priority</option>
+                <option value="High">High Priority</option>
+            </select>
+            <button type="submit" class="btn-add">Add Task</button>
+        </form>
+
+        <ul class="task-list">
+            {% if tasks %}
+                {% for task in tasks %}
+                    <li class="task-item {% if task.status == 'Completed' %}completed{% endif %}">
+                        <div class="task-info">
+                            <span class="task-name">{{ task.name }}</span>
+                            <div class="task-meta">
+                                <span class="priority-badge prio-{{ task.priority }}">{{ task.priority }}</span>
+                                <span class="timestamp">{{ task.dateAdded }}</span>
+                            </div>
+                        </div>
+                        <div class="task-actions">
+                            <a href="{{ url_for('complete_task', task_id=task.id) }}" class="btn-complete" style="text-decoration: none;">
+                                {% if task.status == 'Completed' %}↺{% else %}✔{% endif %}
+                            </a>
+                            <a href="{{ url_for('delete_task', task_id=task.id) }}" class="btn-delete" style="text-decoration: none;">✖</a>
+                        </div>
+                    </li>
+                {% endfor %}
+            {% else %}
+                <li class="empty-state">No tasks available. Add one above! ✨</li>
+            {% endif %}
+        </ul>
+    </div>
+
+</body>
+</html>
