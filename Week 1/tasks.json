@@ -1,1 +1,23 @@
-[]
+[
+    {
+        "id": 3,
+        "name": "New Task 3",
+        "priority": "High",
+        "status": "Completed",
+        "dateAdded": "Jun 15, 05:37 PM"
+    },
+    {
+        "id": 1,
+        "name": "New Task 1",
+        "priority": "Low",
+        "status": "Pending",
+        "dateAdded": "Jun 15, 05:37 PM"
+    },
+    {
+        "id": 2,
+        "name": "New Task 2",
+        "priority": "Medium",
+        "status": "Completed",
+        "dateAdded": "Jun 15, 05:37 PM"
+    }
+]

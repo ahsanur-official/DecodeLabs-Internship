@@ -1,6 +1,6 @@
 # ==========================================
-# FLASK WEB SERVER
-# DecodeLabs Project 1 (Python Server-Side)
+# TO-DO WEB SERVER
+# DecodeLabs Project 1
 # ==========================================
 
 from flask import Flask, render_template, request, redirect, url_for

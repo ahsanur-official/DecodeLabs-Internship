@@ -40,6 +40,54 @@
         "documentation": {}
     },
     {
+        "label": "Flask",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "render_template",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "request",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "redirect",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "url_for",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "flash",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
         "label": "json",
         "kind": 6,
         "isExtraImport": true,
@@ -55,6 +103,14 @@
         "importPath": "os",
         "description": "os",
         "detail": "os",
+        "documentation": {}
+    },
+    {
+        "label": "datetime",
+        "importPath": "datetime",
+        "description": "datetime",
+        "isExtraImport": true,
+        "detail": "datetime",
         "documentation": {}
     },
     {
@@ -144,6 +200,78 @@
         "description": "Week 1.app",
         "peekOfCode": "FILE_NAME = \"tasks.json\"\n# --- Helper Functions ---\ndef load_tasks():\n    if os.path.exists(FILE_NAME):\n        with open(FILE_NAME, \"r\") as file:\n            try:\n                return json.load(file)\n            except json.JSONDecodeError:\n                return []\n    return []",
         "detail": "Week 1.app",
+        "documentation": {}
+    },
+    {
+        "label": "load_state",
+        "kind": 2,
+        "importPath": "Week 2.app",
+        "description": "Week 2.app",
+        "peekOfCode": "def load_state():\n    if os.path.exists(FILE_NAME):\n        with open(FILE_NAME, \"r\") as file:\n            try:\n                return json.load(file)\n            except json.JSONDecodeError:\n                pass\n    return {\"total\": 0.0, \"transactions\": []}\ndef save_state(state):\n    with open(FILE_NAME, \"w\") as file:",
+        "detail": "Week 2.app",
+        "documentation": {}
+    },
+    {
+        "label": "save_state",
+        "kind": 2,
+        "importPath": "Week 2.app",
+        "description": "Week 2.app",
+        "peekOfCode": "def save_state(state):\n    with open(FILE_NAME, \"w\") as file:\n        json.dump(state, file, indent=4)\n@app.route(\"/\")\ndef index():\n    state = load_state()\n    return render_template(\n        \"index.html\", total=state[\"total\"], transactions=state[\"transactions\"]\n    )\n@app.route(\"/process\", methods=[\"POST\"])",
+        "detail": "Week 2.app",
+        "documentation": {}
+    },
+    {
+        "label": "index",
+        "kind": 2,
+        "importPath": "Week 2.app",
+        "description": "Week 2.app",
+        "peekOfCode": "def index():\n    state = load_state()\n    return render_template(\n        \"index.html\", total=state[\"total\"], transactions=state[\"transactions\"]\n    )\n@app.route(\"/process\", methods=[\"POST\"])\ndef process_expense():\n    state = load_state()\n    raw_amount = request.form.get(\"amount\").strip()\n    description = request.form.get(\"description\", \"General Expense\").strip()",
+        "detail": "Week 2.app",
+        "documentation": {}
+    },
+    {
+        "label": "process_expense",
+        "kind": 2,
+        "importPath": "Week 2.app",
+        "description": "Week 2.app",
+        "peekOfCode": "def process_expense():\n    state = load_state()\n    raw_amount = request.form.get(\"amount\").strip()\n    description = request.form.get(\"description\", \"General Expense\").strip()\n    try:\n        expense = float(raw_amount)\n        if expense <= 0:\n            flash(\"Amount must be greater than zero.\", \"error\")\n            return redirect(url_for(\"index\"))\n        state[\"total\"] += expense",
+        "detail": "Week 2.app",
+        "documentation": {}
+    },
+    {
+        "label": "finalize_ledger",
+        "kind": 2,
+        "importPath": "Week 2.app",
+        "description": "Week 2.app",
+        "peekOfCode": "def finalize_ledger():\n    save_state({\"total\": 0.0, \"transactions\": []})\n    flash(\"Ledger finalized. System ready for new cycle.\", \"info\")\n    return redirect(url_for(\"index\"))\nif __name__ == \"__main__\":\n    app.run(debug=True)",
+        "detail": "Week 2.app",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "Week 2.app",
+        "description": "Week 2.app",
+        "peekOfCode": "app = Flask(__name__)\napp.secret_key = \"decodelabs_secure_key\"\nFILE_NAME = \"ledger.json\"\ndef load_state():\n    if os.path.exists(FILE_NAME):\n        with open(FILE_NAME, \"r\") as file:\n            try:\n                return json.load(file)\n            except json.JSONDecodeError:\n                pass",
+        "detail": "Week 2.app",
+        "documentation": {}
+    },
+    {
+        "label": "app.secret_key",
+        "kind": 5,
+        "importPath": "Week 2.app",
+        "description": "Week 2.app",
+        "peekOfCode": "app.secret_key = \"decodelabs_secure_key\"\nFILE_NAME = \"ledger.json\"\ndef load_state():\n    if os.path.exists(FILE_NAME):\n        with open(FILE_NAME, \"r\") as file:\n            try:\n                return json.load(file)\n            except json.JSONDecodeError:\n                pass\n    return {\"total\": 0.0, \"transactions\": []}",
+        "detail": "Week 2.app",
+        "documentation": {}
+    },
+    {
+        "label": "FILE_NAME",
+        "kind": 5,
+        "importPath": "Week 2.app",
+        "description": "Week 2.app",
+        "peekOfCode": "FILE_NAME = \"ledger.json\"\ndef load_state():\n    if os.path.exists(FILE_NAME):\n        with open(FILE_NAME, \"r\") as file:\n            try:\n                return json.load(file)\n            except json.JSONDecodeError:\n                pass\n    return {\"total\": 0.0, \"transactions\": []}\ndef save_state(state):",
+        "detail": "Week 2.app",
         "documentation": {}
     }
 ]
