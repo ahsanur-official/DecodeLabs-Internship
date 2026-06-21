@@ -1,0 +1,234 @@
+:root {
+  --bg-dark: #0a0a0f;
+  --panel-bg: #13141c;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --neon-blue: #60a5fa;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border-color: #1e293b;
+
+  /* Strength Colors */
+  --weak: #ef4444;
+  --moderate: #eab308;
+  --strong: #22c55e;
+  --enterprise: #a855f7;
+}
+
+body {
+  font-family: "Inter", sans-serif;
+  background-color: var(--bg-dark);
+  background-image: radial-gradient(
+    circle at 50% 0%,
+    #1e3a8a22 0%,
+    transparent 50%
+  );
+  color: var(--text-main);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  margin: 0;
+  padding: 2rem;
+}
+
+.dashboard {
+  width: 100%;
+  max-width: 550px;
+  background: var(--panel-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8);
+}
+
+.header {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+.logo {
+  width: 50px;
+  height: 50px;
+  background: linear-gradient(135deg, var(--primary), var(--neon-blue));
+  border-radius: 12px;
+  margin: 0 auto 1rem;
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.4);
+}
+.header h2 {
+  margin: 0;
+  font-size: 1.8rem;
+  letter-spacing: -0.5px;
+}
+.header p {
+  color: var(--primary);
+  font-size: 0.9rem;
+  margin-top: 5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.console-box {
+  background: #000;
+  border: 1px solid #334155;
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+  text-align: center;
+}
+
+.password-display {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 1.8rem;
+  color: var(--neon-blue);
+  word-break: break-all;
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px rgba(96, 165, 250, 0.5);
+}
+
+.password-display.placeholder {
+  color: #475569;
+  font-size: 1.2rem;
+  text-shadow: none;
+}
+
+.btn-copy {
+  background: transparent;
+  color: var(--text-muted);
+  border: 1px solid var(--border-color);
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.btn-copy:hover {
+  color: white;
+  border-color: white;
+}
+.btn-copy.copied {
+  background: var(--strong);
+  color: #000;
+  border-color: var(--strong);
+}
+
+.metrics {
+  margin-top: 1.5rem;
+  border-top: 1px dashed #334155;
+  padding-top: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 0.9rem;
+  text-align: left;
+}
+.metric-item {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-muted);
+}
+.entropy-val {
+  color: var(--text-main);
+  font-family: "JetBrains Mono", monospace;
+}
+
+.strength-badge {
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  color: #000;
+}
+.weak {
+  background: var(--weak);
+}
+.moderate {
+  background: var(--moderate);
+}
+.strong {
+  background: var(--strong);
+}
+.enterprise {
+  background: var(--enterprise);
+  color: white;
+}
+
+.slider-group {
+  margin-bottom: 2rem;
+}
+.slider-group label {
+  display: block;
+  margin-bottom: 10px;
+  font-weight: 600;
+  color: var(--text-muted);
+}
+.slider-group input[type="range"] {
+  width: 100%;
+  accent-color: var(--primary);
+  cursor: pointer;
+}
+
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+  margin-bottom: 2rem;
+}
+
+.checkbox-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 0.95rem;
+}
+.checkbox-container input {
+  cursor: pointer;
+  accent-color: var(--primary);
+  width: 18px;
+  height: 18px;
+}
+
+.btn-generate {
+  width: 100%;
+  padding: 1.2rem;
+  background: linear-gradient(135deg, var(--primary), var(--primary-hover));
+  color: white;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.1rem;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(59, 130, 246, 0.2);
+  transition: all 0.3s;
+}
+.btn-generate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 25px rgba(59, 130, 246, 0.4);
+}
+
+.alert-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+.alert {
+  padding: 1rem;
+  background: var(--weak);
+  color: white;
+  border-radius: 8px;
+  font-weight: 600;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+}
+
+@media (max-width: 500px) {
+  .dashboard {
+    padding: 1.5rem;
+  }
+  .checkbox-grid {
+    grid-template-columns: 1fr;
+  }
+  .password-display {
+    font-size: 1.4rem;
+  }
+}

@@ -88,6 +88,54 @@
         "documentation": {}
     },
     {
+        "label": "Flask",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "render_template",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "request",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "flash",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "redirect",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
+        "label": "url_for",
+        "importPath": "flask",
+        "description": "flask",
+        "isExtraImport": true,
+        "detail": "flask",
+        "documentation": {}
+    },
+    {
         "label": "json",
         "kind": 6,
         "isExtraImport": true,
@@ -119,6 +167,33 @@
         "description": "datetime",
         "isExtraImport": true,
         "detail": "datetime",
+        "documentation": {}
+    },
+    {
+        "label": "string",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "string",
+        "description": "string",
+        "detail": "string",
+        "documentation": {}
+    },
+    {
+        "label": "secrets",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "secrets",
+        "description": "secrets",
+        "detail": "secrets",
+        "documentation": {}
+    },
+    {
+        "label": "math",
+        "kind": 6,
+        "isExtraImport": true,
+        "importPath": "math",
+        "description": "math",
+        "detail": "math",
         "documentation": {}
     },
     {
@@ -272,6 +347,33 @@
         "description": "Week 2.app",
         "peekOfCode": "FILE_NAME = \"ledger.json\"\ndef load_state():\n    if os.path.exists(FILE_NAME):\n        with open(FILE_NAME, \"r\") as file:\n            try:\n                return json.load(file)\n            except json.JSONDecodeError:\n                pass\n    return {\"total\": 0.0, \"transactions\": []}\ndef save_state(state):",
         "detail": "Week 2.app",
+        "documentation": {}
+    },
+    {
+        "label": "index",
+        "kind": 2,
+        "importPath": "Week 3.app",
+        "description": "Week 3.app",
+        "peekOfCode": "def index():\n    password = \"\"\n    entropy = 0\n    strength_label = \"\"\n    strength_class = \"\"\n    if request.method == \"POST\":\n        try:\n            length = int(request.form.get(\"length\", 16))\n            use_upper = \"uppercase\" in request.form\n            use_lower = \"lowercase\" in request.form",
+        "detail": "Week 3.app",
+        "documentation": {}
+    },
+    {
+        "label": "app",
+        "kind": 5,
+        "importPath": "Week 3.app",
+        "description": "Week 3.app",
+        "peekOfCode": "app = Flask(__name__)\napp.secret_key = \"decodelabs_p3_secure_key\"\n@app.route(\"/\", methods=[\"GET\", \"POST\"])\ndef index():\n    password = \"\"\n    entropy = 0\n    strength_label = \"\"\n    strength_class = \"\"\n    if request.method == \"POST\":\n        try:",
+        "detail": "Week 3.app",
+        "documentation": {}
+    },
+    {
+        "label": "app.secret_key",
+        "kind": 5,
+        "importPath": "Week 3.app",
+        "description": "Week 3.app",
+        "peekOfCode": "app.secret_key = \"decodelabs_p3_secure_key\"\n@app.route(\"/\", methods=[\"GET\", \"POST\"])\ndef index():\n    password = \"\"\n    entropy = 0\n    strength_label = \"\"\n    strength_class = \"\"\n    if request.method == \"POST\":\n        try:\n            length = int(request.form.get(\"length\", 16))",
+        "detail": "Week 3.app",
         "documentation": {}
     }
 ]

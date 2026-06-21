@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DecodeLabs | Security Shield</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&family=JetBrains+Mono:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div class="alert-container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+    </div>
+
+    <div class="dashboard">
+        <div class="header">
+            <div class="logo"></div>
+            <h2>Entropy Engine</h2>
+            <p>DecodeLabs Phase 3</p>
+        </div>
+
+        <div class="console-box">
+            {% if password %}
+                <div class="password-display" id="pwd-text">{{ password }}</div>
+                <button class="btn-copy" onclick="copyToClipboard()">Copy to Clipboard</button>
+                
+                <div class="metrics">
+                    <div class="metric-item">
+                        <span>Information Entropy:</span>
+                        <strong class="entropy-val">{{ entropy }} bits</strong>
+                    </div>
+                    <div class="metric-item">
+                        <span>Cryptographic Strength:</span>
+                        <strong class="strength-badge {{ strength_class }}">{{ strength_label }}</strong>
+                    </div>
+                </div>
+            {% else %}
+                <div class="password-display placeholder">Awaiting generation...</div>
+            {% endif %}
+        </div>
+
+        <form action="/" method="POST" class="config-form">
+            
+            <div class="slider-group">
+                <label for="length">Password Length: <span id="len-val">16</span> characters</label>
+                <input type="range" id="length" name="length" min="8" max="128" value="16" oninput="document.getElementById('len-val').innerText = this.value">
+            </div>
+
+            <div class="checkbox-grid">
+                <label class="checkbox-container">
+                    <input type="checkbox" name="uppercase" checked>
+                    <span class="checkmark"></span> Uppercase (A-Z)
+                </label>
+                
+                <label class="checkbox-container">
+                    <input type="checkbox" name="lowercase" checked>
+                    <span class="checkmark"></span> Lowercase (a-z)
+                </label>
+                
+                <label class="checkbox-container">
+                    <input type="checkbox" name="digits" checked>
+                    <span class="checkmark"></span> Digits (0-9)
+                </label>
+                
+                <label class="checkbox-container">
+                    <input type="checkbox" name="symbols" checked>
+                    <span class="checkmark"></span> Symbols (!@#$)
+                </label>
+            </div>
+
+            <button type="submit" class="btn-generate">Generate Secure Key</button>
+        </form>
+    </div>
+
+    <script>
+        function copyToClipboard() {
+            const pwdText = document.getElementById("pwd-text").innerText;
+            navigator.clipboard.writeText(pwdText).then(() => {
+                const btn = document.querySelector(".btn-copy");
+                btn.innerText = "Copied!";
+                btn.classList.add("copied");
+                setTimeout(() => {
+                    btn.innerText = "Copy to Clipboard";
+                    btn.classList.remove("copied");
+                }, 2000);
+            });
+        }
+        
+        setTimeout(() => {
+            document.querySelectorAll('.alert').forEach(a => a.remove());
+        }, 3000);
+    </script>
+</body>
+</html>
