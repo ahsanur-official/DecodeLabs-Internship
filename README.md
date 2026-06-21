@@ -1,3 +1,4 @@
+Markdown
 # ⚙️ DecodeLabs Industrial Training: Backend Architecture Portfolio
 
 ![Python](https://img.shields.io/badge/Python-3776AB?style=for-the-badge&logo=python&logoColor=white)
@@ -72,3 +73,43 @@ DecodeLabs-Internship/
     ├── app.py
     ├── static/style.css
     └── templates/index.html
+📊 Core Competencies Acquired
+Domain	Skills & Methodologies
+Backend Logic	Python 3, Flask Routing, IPO Architecture, Sentinel Values, Decoupling
+Data Engineering	JSON Serialization, Accumulator Patterns, Data State Preservation
+Security & Math	CSPRNG (secrets), Information Entropy, Defensive Coding (Error Handling)
+Optimization	Time/Space Complexity Management, Big O Notation (O(N) string joining)
+Frontend/UI	HTML5, CSS3 Custom Properties, Glassmorphism, Jinja2 SSR
+🚀 Setup & Deployment
+To spin up any of these isolated environments on a local machine:
+
+1. Clone the repository:
+
+Bash
+git clone [https://github.com/ahsanur-official/DecodeLabs-Internship.git](https://github.com/ahsanur-official/DecodeLabs-Internship.git)
+cd DecodeLabs-Internship
+2. Install the required dependencies:
+
+Bash
+pip install flask
+3. Initialize a specific engine (e.g., Phase 3):
+
+Bash
+cd "Week 3"
+python app.py
+4. Access the Interface:
+Connect to the local WSGI server via browser at: http://127.0.0.1:5000
+
+🤝 Acknowledgments
+Developed strictly under the guidelines of the DecodeLabs Industrial Engineering track.
+
+Resourcefulness: I actively utilized technical documentation, Google, and AI tools throughout this process to aggressively debug, overcome architectural roadblocks, and deeply accelerate my understanding of modern backend systems.
+
+👨‍💻 Developed By
+Md. Ahsanur Rahaman
+
+DecodeLabs Intern - Backend Engineering (Batch 2026)
+
+Location: Bogura, Bangladesh
+
+GitHub: @ahsanur-official
