@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Knowledge Diagnostic Dashboard</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='style.css') }}"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    <div class="shell">
+      <aside class="sidebar" aria-label="Dashboard navigation">
+        <div class="brand">
+          <div class="brand-mark">KD</div>
+          <div>
+            <p>DecodeLabs</p>
+            <h1>Nexus Exam</h1>
+          </div>
+        </div>
+
+        <nav class="nav-links">
+          <button class="nav-link active" data-view="exam-view">
+            <span>Exam</span>
+            <small>Answer live questions</small>
+          </button>
+          <button class="nav-link" data-view="results-view">
+            <span>Results</span>
+            <small>Saved attempts</small>
+          </button>
+          <button class="nav-link" data-view="feedback-view">
+            <span>Review</span>
+            <small>Latest feedback</small>
+          </button>
+        </nav>
+
+        <div class="sidebar-panel">
+          <p class="eyebrow">Server status</p>
+          <div class="status-row">
+            <span class="status-dot"></span>
+            <strong>Flask API online</strong>
+          </div>
+          <p id="questionMeta">Loading exam profile...</p>
+        </div>
+      </aside>
+
+      <main class="content">
+        <section class="hero">
+          <div>
+            <p class="eyebrow">Week 4 API Driven Project</p>
+            <h2>Knowledge Diagnostic Dashboard</h2>
+            <p>
+              Secure server-side grading, local performance history, and a
+              detailed answer review in one polished web interface.
+            </p>
+          </div>
+          <div class="hero-score" aria-label="Latest score summary">
+            <span id="latestScore">--</span>
+            <small>latest score</small>
+          </div>
+        </section>
+
+        <section class="stats-grid" aria-label="Assessment statistics">
+          <article class="stat-card">
+            <span>Questions</span>
+            <strong id="statQuestions">--</strong>
+          </article>
+          <article class="stat-card">
+            <span>Total points</span>
+            <strong id="statPoints">--</strong>
+          </article>
+          <article class="stat-card">
+            <span>Categories</span>
+            <strong id="statCategories">--</strong>
+          </article>
+          <article class="stat-card">
+            <span>Attempts</span>
+            <strong id="statAttempts">0</strong>
+          </article>
+        </section>
+
+        <section id="exam-view" class="view-section active">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Live assessment</p>
+              <h3>Answer every question</h3>
+            </div>
+            <div class="completion-meter">
+              <span id="answeredCount">0 answered</span>
+              <div class="mini-progress">
+                <div id="answeredBar"></div>
+              </div>
+            </div>
+          </div>
+
+          <form id="quiz-form" class="quiz-form">
+            <div id="questions-container" class="questions-grid">
+              <div class="empty-state">Loading questions...</div>
+            </div>
+            <div class="form-actions">
+              <button type="button" class="btn secondary" id="reset-btn">
+                Reset answers
+              </button>
+              <button type="submit" class="btn primary" id="submit-btn">
+                Submit evaluation
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <section id="results-view" class="view-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Local archive</p>
+              <h3>Attempt history</h3>
+            </div>
+            <button type="button" class="btn danger" id="clear-history-btn">
+              Clear history
+            </button>
+          </div>
+          <div id="history-container" class="history-grid"></div>
+        </section>
+
+        <section id="feedback-view" class="view-section">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Diagnostic review</p>
+              <h3>Latest feedback</h3>
+            </div>
+            <div id="gradePill" class="grade-pill">No attempt yet</div>
+          </div>
+          <div id="summary-container" class="summary-panel empty">
+            Complete the exam to generate a detailed report.
+          </div>
+          <div id="latest-feedback-container" class="feedback-list"></div>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const historyKey = "nexus_history";
+      let questionCount = 0;
+
+      document.addEventListener("DOMContentLoaded", () => {
+        bindNavigation();
+        bindForm();
+        fetchQuestions();
+        renderHistory();
+      });
+
+      function bindNavigation() {
+        document.querySelectorAll(".nav-link").forEach((button) => {
+          button.addEventListener("click", () => switchView(button.dataset.view));
+        });
+      }
+
+      function bindForm() {
+        document.getElementById("quiz-form").addEventListener("submit", submitExam);
+        document.getElementById("reset-btn").addEventListener("click", () => {
+          document.getElementById("quiz-form").reset();
+          updateCompletion();
+        });
+        document
+          .getElementById("clear-history-btn")
+          .addEventListener("click", clearHistory);
+      }
+
+      function switchView(viewId) {
+        document.querySelectorAll(".view-section").forEach((view) => {
+          view.classList.toggle("active", view.id === viewId);
+        });
+        document.querySelectorAll(".nav-link").forEach((button) => {
+          button.classList.toggle("active", button.dataset.view === viewId);
+        });
+      }
+
+      async function fetchQuestions() {
+        try {
+          const response = await fetch("/api/questions");
+          const payload = await response.json();
+          questionCount = payload.meta.total_questions;
+          renderMeta(payload.meta);
+          renderQuestions(payload.questions);
+        } catch (error) {
+          document.getElementById("questions-container").innerHTML =
+            '<div class="empty-state error">Unable to load questions. Check the Flask server.</div>';
+        }
+      }
+
+      function renderMeta(meta) {
+        document.getElementById("statQuestions").textContent = meta.total_questions;
+        document.getElementById("statPoints").textContent = meta.total_points;
+        document.getElementById("statCategories").textContent = meta.categories.length;
+        document.getElementById("questionMeta").textContent =
+          `${meta.total_questions} questions across ${meta.categories.join(", ")}`;
+      }
+
+      function renderQuestions(questions) {
+        const container = document.getElementById("questions-container");
+        container.innerHTML = questions
+          .map(
+            (question, index) => `
+              <article class="question-card">
+                <div class="question-topline">
+                  <span class="question-number">${String(index + 1).padStart(2, "0")}</span>
+                  <span>${question.category}</span>
+                  <span>${question.difficulty}</span>
+                  <span>${question.points} pts</span>
+                </div>
+                <label for="${question.id}">${question.text}</label>
+                <input
+                  type="text"
+                  id="${question.id}"
+                  name="${question.id}"
+                  placeholder="Type your answer"
+                  required
+                  autocomplete="off"
+                />
+              </article>
+            `,
+          )
+          .join("");
+
+        container.querySelectorAll("input").forEach((input) => {
+          input.addEventListener("input", updateCompletion);
+        });
+        updateCompletion();
+      }
+
+      function updateCompletion() {
+        const answers = Array.from(document.querySelectorAll(".question-card input"));
+        const answered = answers.filter((input) => input.value.trim()).length;
+        const percent = questionCount ? Math.round((answered / questionCount) * 100) : 0;
+        document.getElementById("answeredCount").textContent =
+          `${answered} of ${questionCount} answered`;
+        document.getElementById("answeredBar").style.width = `${percent}%`;
+      }
+
+      async function submitExam(event) {
+        event.preventDefault();
+        const button = document.getElementById("submit-btn");
+        button.disabled = true;
+        button.textContent = "Evaluating...";
+
+        const formData = new FormData(event.target);
+        const answers = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch("/api/evaluate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(answers),
+          });
+          const report = await response.json();
+          saveReport(report);
+          renderSummary(report);
+          renderLatestFeedback(report.feedback);
+          event.target.reset();
+          updateCompletion();
+          switchView("feedback-view");
+        } finally {
+          button.disabled = false;
+          button.textContent = "Submit evaluation";
+        }
+      }
+
+      function saveReport(report) {
+        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+        history.unshift({
+          time: report.timestamp,
+          score: report.score,
+          total: report.total,
+          percentage: report.percentage,
+          earned_points: report.earned_points,
+          total_points: report.total_points,
+          grade: report.grade,
+        });
+        localStorage.setItem(historyKey, JSON.stringify(history.slice(0, 12)));
+        renderHistory();
+      }
+
+      function renderHistory() {
+        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+        document.getElementById("statAttempts").textContent = history.length;
+        document.getElementById("latestScore").textContent = history.length
+          ? `${history[0].percentage}%`
+          : "--";
+
+        const container = document.getElementById("history-container");
+        if (!history.length) {
+          container.innerHTML = '<div class="empty-state">No attempts saved yet.</div>';
+          return;
+        }
+
+        container.innerHTML = history
+          .map(
+            (item) => `
+              <article class="history-card">
+                <div>
+                  <span>${item.time}</span>
+                  <h4>${item.grade}</h4>
+                </div>
+                <strong>${item.score}/${item.total}</strong>
+                <p>${item.earned_points}/${item.total_points} points</p>
+                <div class="progress-bar">
+                  <div style="width: ${item.percentage}%"></div>
+                </div>
+              </article>
+            `,
+          )
+          .join("");
+      }
+
+      function renderSummary(report) {
+        document.getElementById("gradePill").textContent = report.grade;
+        document.getElementById("gradePill").className = `grade-pill ${report.badge_class}`;
+
+        const categoryRows = Object.entries(report.categories)
+          .map(([name, data]) => {
+            const percent = Math.round((data.correct / data.total) * 100);
+            return `
+              <div class="category-row">
+                <span>${name}</span>
+                <strong>${data.correct}/${data.total}</strong>
+                <div class="mini-progress"><div style="width: ${percent}%"></div></div>
+              </div>
+            `;
+          })
+          .join("");
+
+        document.getElementById("summary-container").classList.remove("empty");
+        document.getElementById("summary-container").innerHTML = `
+          <div class="summary-score">
+            <span>${report.percentage}%</span>
+            <div>
+              <h4>${report.score}/${report.total} correct</h4>
+              <p>${report.message}</p>
+            </div>
+          </div>
+          <div class="category-breakdown">${categoryRows}</div>
+        `;
+      }
+
+      function renderLatestFeedback(feedback) {
+        const container = document.getElementById("latest-feedback-container");
+        container.innerHTML = feedback
+          .map(
+            (item) => `
+              <article class="feedback-card ${item.status}">
+                <div class="feedback-head">
+                  <span>Q${item.q}</span>
+                  <strong>${item.status}</strong>
+                </div>
+                <h4>${item.text}</h4>
+                <dl>
+                  <div><dt>Your answer</dt><dd>${item.user_answer}</dd></div>
+                  <div><dt>Correct answer</dt><dd>${item.correct_answer}</dd></div>
+                </dl>
+                <p>${item.explanation}</p>
+              </article>
+            `,
+          )
+          .join("");
+      }
+
+      function clearHistory() {
+        localStorage.removeItem(historyKey);
+        renderHistory();
+        document.getElementById("gradePill").className = "grade-pill";
+        document.getElementById("gradePill").textContent = "No attempt yet";
+        document.getElementById("summary-container").className = "summary-panel empty";
+        document.getElementById("summary-container").textContent =
+          "Complete the exam to generate a detailed report.";
+        document.getElementById("latest-feedback-container").innerHTML = "";
+      }
+    </script>
+  </body>
+</html>
