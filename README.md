@@ -1,4 +1,4 @@
-# DecodeLabs Industrial Training: Backend Architecture Portfolio
+# DecodeLabs Internship Portfolio
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)
 ![Flask](https://img.shields.io/badge/Flask-WSGI-000000?style=for-the-badge&logo=flask&logoColor=white)
@@ -7,203 +7,172 @@
 ![CSS3](https://img.shields.io/badge/CSS3-Custom_UI-1572B6?style=for-the-badge&logo=css3&logoColor=white)
 ![JavaScript](https://img.shields.io/badge/JavaScript-ES6-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black)
 
-## Executive Summary
+## Overview
 
-Welcome to my official engineering portfolio for the DecodeLabs Industrial Training Kit (Batch 2026).
+This repository contains my DecodeLabs industrial training projects for Batch 2026. It documents the progression from simple server-rendered applications to a more decoupled, API-driven single page application.
 
-This repository documents my comprehensive progression through the foundational and mastery phases of backend software engineering. The core objective of this training was to transition from writing isolated, monolithic scripts to engineering decoupled, fault-tolerant, and highly scalable systems.
+The portfolio focuses on backend fundamentals, validation, persistence, input handling, state management, and presentation-layer separation. Each week builds on the previous one and highlights a different engineering concept.
 
-This portfolio culminates in an API-driven Single Page Application (SPA), showcasing advanced data capture, input validation, state preservation, cryptographic integrity, and the strict decoupling of business logic from the presentation layer.
+## Architecture Progression
 
-## System Architecture: The API-Driven Evolution
-
-Throughout this training kit, the architecture evolved from a traditional Server-Side Rendered (SSR) model (Weeks 1-3) into a modern API-driven ecosystem (Week 4).
+The training moved from a traditional server-side rendered model in Weeks 1 to 3 toward a modern API-driven approach in Week 4.
 
 ```mermaid
 graph TD
-	 subgraph Client [Browser / Presentation Layer]
-		  UI[Vanilla JS SPA]
-		  Storage[(Browser LocalStorage)]
-		  UI <-->|Cache Diagnostic State| Storage
-	 end
+    subgraph Client [Browser / Presentation Layer]
+        UI[Vanilla JS SPA]
+        Storage[(Browser LocalStorage)]
+        UI <-->|Cache Diagnostic State| Storage
+    end
 
-	 subgraph Server [Backend / Computation Engine]
-		  API[Flask WSGI API Boundary]
-		  Logic[Python Validation & Cryptographic Engine]
-		  DB[(JSON Persistence / Secure Datasets)]
-	 end
+    subgraph Server [Backend / Computation Engine]
+        API[Flask WSGI API Boundary]
+        Logic[Python Validation and Cryptographic Engine]
+        DB[(JSON Persistence / Datasets)]
+    end
 
-	 UI -->|HTTP GET / POST Payload| API
-	 API <--> Logic
-	 Logic <--> DB
+    UI -->|HTTP requests and form payloads| API
+    API <--> Logic
+    Logic <--> DB
 ```
 
-The Presentation Layer (Client): "Dumb" interfaces built with HTML, CSS, and Vanilla JS that strictly handle presentation, routing, and real-time DOM manipulation.
+### Layer Summary
 
-Client-Side Persistence: Utilizing browser localStorage to cache historical data and diagnostic reports, reducing server load and enabling localized history viewing.
+- Presentation layer: HTML, CSS, and Vanilla JavaScript interfaces responsible for display, routing, and DOM updates.
+- Client-side persistence: browser localStorage is used to cache history and diagnostic data.
+- Transport layer: Flask acts as the API boundary and decouples the UI from backend logic.
+- Computation engine: Python handles validation, defensive logic, scoring, password generation, and response formatting.
+- Persistence layer: JSON files store application state between runs.
 
-The Transport Layer (API Boundary): The Flask WSGI layer serving as a secure gateway, decoding HTTP payloads and decoupling the UI completely from the backend engine.
+## Weekly Projects
 
-The Computation Engine (Logic): The Python core acting as the "Validation Station," handling strict input sanitization, defensive coding algorithms, mathematical accumulators, and cryptographic functions.
+### Week 1: To-Do Web Server
 
-The Persistence Layer (Storage): The permanent data destination, bypassing the "Volatile Trap" of temporary RAM via JSON serialization.
+Focus: data management, CRUD operations, and persistence.
 
-## The Engineering Milestones
+Key features:
 
-### Phase 1: Advanced To-Do List Engine
+- JSON persistence with `tasks.json`.
+- Full CRUD flow: create, read, update, delete.
+- Priority-based task ordering.
+- Date stamping for newly created tasks.
+- Server-side rendering with Flask and Jinja2.
 
-Focus: Data Management, CRUD Operations & Persistence
+### Week 2: Expense Tracker
 
-Objective: Master the fundamental IPO (Input, Process, Output) Architecture.
+Focus: data accumulation and input validation.
 
-Technical Specifications:
+Key features:
 
-- Persistence: Implemented JSON Serialization (tasks.json) to ensure state survives server restarts.
-- Decoupled Rendering: Separated Data Logic from the UI using Server-Side Rendering (SSR) via the Jinja2 templating engine.
-- Functionality: Engineered full CRUD routing (Create, Read, Update, Delete), priority-based sorting algorithms, and automated datetime stamping.
+- Stateful ledger storage in `ledger.json`.
+- Running total management with an accumulator pattern.
+- Transaction history tracking.
+- Validation with `try...except ValueError` to block invalid input.
+- Flash messages for success, error, and finalization events.
 
-### Phase 2: State-Preserving Financial Tracker
+### Week 3: Enterprise Password Generator
 
-Focus: Data Accumulation & The Continuous Audit
+Focus: cryptographic strength, entropy, and secure generation.
 
-Objective: Shift to dynamic, real-time data processing while maintaining systemic fault tolerance.
+Key features:
 
-Technical Specifications:
+- Secure random password generation with `secrets`.
+- Character set selection for uppercase, lowercase, digits, and symbols.
+- Length validation between 8 and 128 characters.
+- Entropy calculation using `math.log2`.
+- Strength labels that classify passwords from weak to enterprise-grade.
 
-- The Ledger Heartbeat: Engineered a state-preserving Accumulator Pattern (total += expense) that safely aggregates data in memory during continuous loop cycles.
-- The Digital Poka-Yoke: Built robust input validation using try...except ValueError blocks to catch garbage payload data and prevent fatal runtime crashes.
-- Control Flow: Implemented graceful shutdowns via Sentinel Values to finalize ledgers and commit data to storage.
+### Week 4: Knowledge Diagnostic
 
-### Phase 3: Enterprise Cryptographic Security Engine
+Focus: control flow, API design, and SPA behavior.
 
-Focus: Mathematical Security & Algorithmic Efficiency
+Key features:
 
-Objective: Transition to cryptographic security and memory optimization, prioritizing efficiency over legacy complexity rules.
-
-Technical Specifications:
-
-- Hardware-Level Entropy: Bypassed the deterministic Mersenne Twister (random module) by implementing Python's secrets.choice() for cryptographically secure pseudo-random number generation (CSPRNG).
-- Linear Time Complexity ($O(N)$): Eliminated the $O(N^2)$ memory bottleneck of immutable string concatenation (+=) by utilizing list comprehension and "".join() to allocate heap memory exactly once.
-- Entropy Validation: Implemented real-time mathematical validation ($E = L \times \log_2(R)$) to calculate cryptographic strength in bits, aligning with NIST SP 800-63-4 guidelines.
-
-### Phase 4: API-Driven Knowledge Engine
-
-Focus: Event-Driven Design, Control Flow & SPA Architecture
-
-Objective: Architect a fully decoupled, data-driven diagnostic engine utilizing RESTful API principles and client-side persistence.
-
-Technical Specifications:
-
-- Data-Driven Logic: Transitioned from hardcoded if/else blocks to a scalable, dictionary-based Question Bank processing inputs via an evaluation loop.
-- API Decoupling: Replaced SSR with strict JSON endpoints (/api/questions, /api/evaluate) to serve a multi-view Vanilla JS frontend.
-- Advanced Sanitization: Implemented aggressive Regex and string normalization (.strip().lower()) to eliminate false failures from chaotic human inputs.
-- State Management: Handled live MCQ form state via JS and archived historical attempt metrics persistently using localStorage.
-
-## API Route Documentation Matrix
-
-| Phase | Endpoint | HTTP Method | Payload/Params | Core Function |
-| --- | --- | --- | --- | --- |
-| Week 1 | /add | POST | task_name, priority | Appends new entity to dataset; assigns unique ID. |
-| Week 1 | /complete/<id> | GET | task_id (int) | Toggles boolean completion status in storage. |
-| Week 1 | /delete/<id> | GET | task_id (int) | Drops entity from dataset via list comprehension. |
-| Week 2 | /process | POST | amount, description | Validates float conversion; accumulates total state. |
-| Week 3 | / | POST | length, toggles | Cryptographic generation and entropy calculation logic. |
-| Week 4 | /api/questions | GET | None | Returns sanitized MCQ dataset (strips correct answers). |
-| Week 4 | /api/evaluate | POST | JSON Object | Evaluates answers, calculates advanced grading metrics. |
-
-## Security Posture & Vulnerability Mitigation
-
-- Data Leakage Prevention: The Phase 4 /api/questions endpoint strictly strips the valid_answers array before transmitting the payload to the client, preventing browser-side manipulation or cheating.
-- Injection Prevention: All user inputs rendered to the DOM are automatically escaped via Flask/Jinja2 and Vanilla JS sanitization functions to mitigate Cross-Site Scripting (XSS) attacks.
-- Type-Safety Enforcement: Strict server-side type casting and ValueError trapping prevent malformed data from corrupting the JSON persistence layer.
-- Cryptographic Predictability: Eradicated pseudo-random vulnerabilities by strictly enforcing the hardware-level secrets module for secure generation tasks.
-
-## Core Competencies Acquired
-
-| Domain | Skills & Methodologies |
-| --- | --- |
-| Backend Logic | Python 3, Flask Routing, IPO Architecture, Sentinel Values, API Decoupling |
-| Data Engineering | JSON Serialization, Accumulator Patterns, Data State Preservation, Dict Mapping |
-| Security & Math | CSPRNG (secrets), Information Entropy, Defensive Coding (Error Handling) |
-| Optimization | Time/Space Complexity Management, Big O Notation ($O(N)$ memory allocation) |
-| Frontend/UI | HTML5, CSS3 Custom Properties, Glassmorphism, JS SPA Routing, LocalStorage |
+- API endpoint that serves quiz questions as JSON.
+- Evaluation endpoint that scores user answers.
+- Input normalization and safe answer comparison.
+- Category-based performance breakdown.
+- Result payload with score, grade, feedback, weak categories, and recommendations.
+- Vanilla JavaScript frontend with localStorage support for cached state.
 
 ## Repository Structure
 
 ```text
 DecodeLabs-Internship/
-│
-├── Week 1/ (Data Management & CRUD)
+├── Week 1/
 │   ├── app.py
 │   ├── tasks.json
 │   ├── static/style.css
 │   └── templates/index.html
-│
-├── Week 2/ (Data Accumulation & Poka-Yoke)
+├── Week 2/
 │   ├── app.py
 │   ├── ledger.json
 │   ├── static/style.css
 │   └── templates/index.html
-│
-├── Week 3/ (Cryptographic Security & Big O)
+├── Week 3/
 │   ├── app.py
 │   ├── static/style.css
 │   └── templates/index.html
-│
-└── Week 4/ (Control Flow & API-Driven SPA)
-	 ├── app.py
-	 ├── static/style.css
-	 └── templates/index.html
+├── Week 4/
+│   ├── app.py
+│   ├── static/style.css
+│   └── templates/index.html
+└── README.md
 ```
 
-## Local Deployment Guide
+## Local Setup
 
-System Requirements:
+Requirements:
 
-- Python 3.10+
-- pip (Python Package Installer)
+- Python 3.10 or later
+- pip
 
-1. Clone the environment:
+Steps:
 
-	```bash
-	git clone https://github.com/ahsanur-official/DecodeLabs-Internship.git
-	cd DecodeLabs-Internship
-	```
+1. Clone the repository.
 
-2. Isolate dependencies (Optional but recommended):
+   ```bash
+   git clone https://github.com/ahsanur-official/DecodeLabs-Internship.git
+   cd DecodeLabs-Internship
+   ```
 
-	```bash
-	python -m venv venv
-	source venv/bin/activate  # On Windows: venv\Scripts\activate
-	```
+2. Create and activate a virtual environment.
 
-3. Install requirements:
+   ```bash
+   python -m venv venv
+   # Windows
+   venv\Scripts\activate
+   ```
 
-	```bash
-	pip install flask
-	```
+3. Install Flask.
 
-4. Spin up the WSGI Server (Example: Phase 4):
+   ```bash
+   pip install flask
+   ```
 
-	```bash
-	cd "Week 4"
-	python app.py
-	```
+4. Run the week you want to test. For example, Week 4:
 
-5. Access the Client Interface:
+   ```bash
+   cd "Week 4"
+   python app.py
+   ```
 
-	Open your browser and connect to: http://127.0.0.1:5000
+5. Open the app in your browser.
 
-## Engineering Identity & Developer Profile
+   ```text
+   http://127.0.0.1:5000
+   ```
+
+## Developer Profile
 
 Md. Ahsanur Rahaman
 
-Computer Science & Engineering (CSE) Undergraduate at Pundra University of Science & Technology (PUB).
+- Computer Science and Engineering undergraduate at Pundra University of Science and Technology (PUB).
+- Based in Bogura, Bangladesh.
+- Engineering philosophy: building robust, fault-tolerant Python backend systems with carefully designed frontend experiences.
+- GitHub: @ahsanur-official
 
-Based in Bogura, Bangladesh.
+## Notes
 
-Engineering Philosophy: Specializing in bridging robust, fault-tolerant Python backend architectures with high-fidelity, graphic-design-driven frontend web experiences.
-
-GitHub: @ahsanur-official
-
-Developed strictly under the architectural guidelines of the DecodeLabs Industrial Engineering track. Built with transparency, utilizing technical documentation and AI tools to aggressively debug and accelerate systemic understanding.
+- The project was developed under the DecodeLabs industrial training guidelines.
+- The codebase demonstrates progression across persistence, validation, cryptography, and API-driven UI design.
