@@ -3,7 +3,6 @@ import re
 
 from flask import Flask, jsonify, render_template, request
 
-
 app = Flask(__name__)
 
 
@@ -11,6 +10,7 @@ QUESTIONS = [
     {
         "id": "q1",
         "text": "What is the capital city of France?",
+        "options": ["London", "Berlin", "Paris", "Madrid"],
         "valid_answers": ["paris"],
         "category": "Geography",
         "difficulty": "Easy",
@@ -20,6 +20,7 @@ QUESTIONS = [
     {
         "id": "q2",
         "text": "Which planet is known as the Red Planet?",
+        "options": ["Venus", "Mars", "Jupiter", "Saturn"],
         "valid_answers": ["mars"],
         "category": "Science",
         "difficulty": "Easy",
@@ -29,6 +30,7 @@ QUESTIONS = [
     {
         "id": "q3",
         "text": "What is the largest ocean on Earth?",
+        "options": ["Atlantic Ocean", "Indian Ocean", "Arctic Ocean", "Pacific Ocean"],
         "valid_answers": ["pacific", "pacific ocean"],
         "category": "Geography",
         "difficulty": "Medium",
@@ -38,6 +40,7 @@ QUESTIONS = [
     {
         "id": "q4",
         "text": "What is the chemical symbol for Gold?",
+        "options": ["Ag", "Au", "Fe", "Gd"],
         "valid_answers": ["au"],
         "category": "Chemistry",
         "difficulty": "Medium",
@@ -47,6 +50,12 @@ QUESTIONS = [
     {
         "id": "q5",
         "text": "Who wrote 'Romeo and Juliet'?",
+        "options": [
+            "Charles Dickens",
+            "William Shakespeare",
+            "Jane Austen",
+            "Mark Twain",
+        ],
         "valid_answers": ["shakespeare", "william shakespeare"],
         "category": "Literature",
         "difficulty": "Medium",
@@ -56,6 +65,7 @@ QUESTIONS = [
     {
         "id": "q6",
         "text": "What is the hardest natural substance on Earth?",
+        "options": ["Gold", "Iron", "Diamond", "Platinum"],
         "valid_answers": ["diamond"],
         "category": "Science",
         "difficulty": "Easy",
@@ -65,6 +75,7 @@ QUESTIONS = [
     {
         "id": "q7",
         "text": "How many continents are there on Earth?",
+        "options": ["5", "6", "7", "8"],
         "valid_answers": ["7", "seven"],
         "category": "Geography",
         "difficulty": "Easy",
@@ -74,6 +85,7 @@ QUESTIONS = [
     {
         "id": "q8",
         "text": "What is the freezing point of water in Celsius?",
+        "options": ["-10", "0", "32", "100"],
         "valid_answers": ["0", "zero"],
         "category": "Science",
         "difficulty": "Easy",
@@ -83,6 +95,7 @@ QUESTIONS = [
     {
         "id": "q9",
         "text": "Which element do humans need to breathe?",
+        "options": ["Carbon Dioxide", "Nitrogen", "Oxygen", "Helium"],
         "valid_answers": ["oxygen", "o2"],
         "category": "Biology",
         "difficulty": "Easy",
@@ -92,6 +105,7 @@ QUESTIONS = [
     {
         "id": "q10",
         "text": "What is the largest mammal in the world?",
+        "options": ["Elephant", "Blue Whale", "Giraffe", "Hippopotamus"],
         "valid_answers": ["blue whale", "whale"],
         "category": "Biology",
         "difficulty": "Medium",
@@ -101,19 +115,29 @@ QUESTIONS = [
 ]
 
 
-def normalize_answer(value):
-    cleaned = (value or "").strip().lower()
-    return re.sub(r"\s+", " ", cleaned)
-
-
+# Ensure you update this function so the API sends the options!
 def safe_question(question):
     return {
         "id": question["id"],
         "text": question["text"],
+        "options": question.get("options", []),  # Added options mapping
         "category": question["category"],
         "difficulty": question["difficulty"],
         "points": question["points"],
     }
+
+
+def normalize_answer(value):
+    cleaned = (value or "").strip().lower()
+    cleaned = re.sub(r"[^\w\s]", "", cleaned)
+    return re.sub(r"\s+", " ", cleaned)
+
+
+def safe_int(value, default=0):
+    try:
+        return int(value)
+    except (TypeError, ValueError):
+        return default
 
 
 @app.route("/")
@@ -142,6 +166,8 @@ def get_questions():
 @app.route("/api/evaluate", methods=["POST"])
 def evaluate():
     user_data = request.get_json(silent=True) or {}
+    answers = user_data.get("answers", user_data)
+    duration_seconds = safe_int(user_data.get("duration_seconds"))
     score = 0
     earned_points = 0
     total = len(QUESTIONS)
@@ -150,9 +176,11 @@ def evaluate():
     categories = {}
 
     for index, question in enumerate(QUESTIONS, start=1):
-        raw_input = user_data.get(question["id"], "")
+        raw_input = answers.get(question["id"], "")
         clean_input = normalize_answer(raw_input)
-        valid_answers = [normalize_answer(answer) for answer in question["valid_answers"]]
+        valid_answers = [
+            normalize_answer(answer) for answer in question["valid_answers"]
+        ]
         is_correct = clean_input in valid_answers
         category = question["category"]
 
@@ -186,26 +214,39 @@ def evaluate():
     percentage = round((score / total) * 100)
     point_percentage = round((earned_points / total_points) * 100)
 
+    weak_categories = [
+        name
+        for name, data in categories.items()
+        if data["total"] and (data["correct"] / data["total"]) < 0.7
+    ]
+
     if percentage == 100:
         grade = "S-Rank Master"
         badge = "badge-s"
         message = "Perfect score. Excellent command of the material."
+        recommendation = "Archive this attempt and move to a harder assessment."
     elif percentage >= 80:
         grade = "A-Rank Expert"
         badge = "badge-a"
         message = "Strong performance with only a few review points."
+        recommendation = (
+            "Review the incorrect explanations, then retake once for consistency."
+        )
     elif percentage >= 50:
         grade = "B-Rank Builder"
         badge = "badge-b"
         message = "Good start. Review the missed topics and retake."
+        recommendation = "Focus on your weak categories before the next attempt."
     else:
         grade = "Needs Practice"
         badge = "badge-f"
         message = "Focus on the feedback cards, then try again."
+        recommendation = "Start with one category at a time and use the review notes."
 
     return jsonify(
         {
             "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+            "duration_seconds": duration_seconds,
             "score": score,
             "total": total,
             "percentage": percentage,
@@ -215,6 +256,8 @@ def evaluate():
             "grade": grade,
             "badge_class": badge,
             "message": message,
+            "recommendation": recommendation,
+            "weak_categories": weak_categories,
             "categories": categories,
             "feedback": feedback,
         }

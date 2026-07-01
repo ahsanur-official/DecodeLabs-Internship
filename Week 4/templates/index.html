@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Knowledge Diagnostic Dashboard</title>
+    <title>Nexus Exam Console</title>
     <link
       rel="stylesheet"
       href="{{ url_for('static', filename='style.css') }}"
@@ -14,165 +14,248 @@
     />
   </head>
   <body>
-    <div class="shell">
-      <aside class="sidebar" aria-label="Dashboard navigation">
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Application navigation">
         <div class="brand">
-          <div class="brand-mark">KD</div>
+          <div class="brand-mark">NX</div>
           <div>
-            <p>DecodeLabs</p>
-            <h1>Nexus Exam</h1>
+            <span>DecodeLabs</span>
+            <strong>Nexus Exam</strong>
           </div>
         </div>
 
         <nav class="nav-links">
-          <button class="nav-link active" data-view="exam-view">
-            <span>Exam</span>
-            <small>Answer live questions</small>
+          <button class="nav-link active" type="button" data-view="exam-view">
+            <span>Assessment</span>
+            <small>Live answer sheet</small>
           </button>
-          <button class="nav-link" data-view="results-view">
-            <span>Results</span>
-            <small>Saved attempts</small>
+          <button class="nav-link" type="button" data-view="results-view">
+            <span>Attempts</span>
+            <small>History and export</small>
           </button>
-          <button class="nav-link" data-view="feedback-view">
+          <button class="nav-link" type="button" data-view="feedback-view">
             <span>Review</span>
-            <small>Latest feedback</small>
+            <small>Latest diagnostic</small>
           </button>
         </nav>
 
-        <div class="sidebar-panel">
-          <p class="eyebrow">Server status</p>
-          <div class="status-row">
-            <span class="status-dot"></span>
+        <div class="server-card">
+          <p class="eyebrow">System</p>
+          <div class="server-line">
+            <span class="pulse"></span>
             <strong>Flask API online</strong>
           </div>
           <p id="questionMeta">Loading exam profile...</p>
         </div>
       </aside>
 
-      <main class="content">
-        <section class="hero">
+      <main class="workspace">
+        <header class="topbar">
           <div>
             <p class="eyebrow">Week 4 API Driven Project</p>
-            <h2>Knowledge Diagnostic Dashboard</h2>
-            <p>
-              Secure server-side grading, local performance history, and a
-              detailed answer review in one polished web interface.
-            </p>
+            <h1>Knowledge Diagnostic Console</h1>
           </div>
-          <div class="hero-score" aria-label="Latest score summary">
-            <span id="latestScore">--</span>
-            <small>latest score</small>
+          <div class="topbar-actions">
+            <button
+              class="icon-btn"
+              type="button"
+              id="export-btn"
+              title="Export attempts"
+            >
+              Export
+            </button>
+            <button
+              class="icon-btn"
+              type="button"
+              id="print-btn"
+              title="Print report"
+            >
+              Print
+            </button>
           </div>
-        </section>
+        </header>
 
-        <section class="stats-grid" aria-label="Assessment statistics">
-          <article class="stat-card">
+        <section class="command-strip" aria-label="Assessment status">
+          <article class="metric-card">
             <span>Questions</span>
             <strong id="statQuestions">--</strong>
           </article>
-          <article class="stat-card">
-            <span>Total points</span>
+          <article class="metric-card">
+            <span>Points</span>
             <strong id="statPoints">--</strong>
           </article>
-          <article class="stat-card">
-            <span>Categories</span>
-            <strong id="statCategories">--</strong>
+          <article class="metric-card">
+            <span>Answered</span>
+            <strong id="statAnswered">0%</strong>
           </article>
-          <article class="stat-card">
-            <span>Attempts</span>
-            <strong id="statAttempts">0</strong>
+          <article class="metric-card">
+            <span>Timer</span>
+            <strong id="timer">00:00</strong>
+          </article>
+          <article class="metric-card accent">
+            <span>Latest</span>
+            <strong id="latestScore">--</strong>
           </article>
         </section>
 
         <section id="exam-view" class="view-section active">
-          <div class="section-heading">
+          <div class="panel-heading">
             <div>
-              <p class="eyebrow">Live assessment</p>
-              <h3>Answer every question</h3>
+              <p class="eyebrow">Assessment</p>
+              <h2>Answer Sheet</h2>
             </div>
-            <div class="completion-meter">
-              <span id="answeredCount">0 answered</span>
-              <div class="mini-progress">
-                <div id="answeredBar"></div>
-              </div>
+            <div class="tool-row">
+              <input
+                id="question-search"
+                class="search-input"
+                type="search"
+                placeholder="Search question or category"
+              />
+              <select
+                id="category-filter"
+                class="select-input"
+                aria-label="Filter category"
+              >
+                <option value="all">All categories</option>
+              </select>
             </div>
           </div>
 
+          <div class="progress-track" aria-label="Completion progress">
+            <div id="answeredBar"></div>
+          </div>
+
           <form id="quiz-form" class="quiz-form">
-            <div id="questions-container" class="questions-grid">
+            <div id="questions-container" class="question-list">
               <div class="empty-state">Loading questions...</div>
             </div>
-            <div class="form-actions">
-              <button type="button" class="btn secondary" id="reset-btn">
-                Reset answers
-              </button>
-              <button type="submit" class="btn primary" id="submit-btn">
-                Submit evaluation
-              </button>
+            <div class="sticky-actions">
+              <div>
+                <strong id="answeredCount">0 of 0 answered</strong>
+                <span>Drafts save automatically in this browser.</span>
+              </div>
+              <div class="action-group">
+                <button type="button" class="btn ghost" id="reset-btn">
+                  Reset
+                </button>
+                <button type="submit" class="btn primary" id="submit-btn">
+                  Submit
+                </button>
+              </div>
             </div>
           </form>
         </section>
 
         <section id="results-view" class="view-section">
-          <div class="section-heading">
+          <div class="panel-heading">
             <div>
-              <p class="eyebrow">Local archive</p>
-              <h3>Attempt history</h3>
+              <p class="eyebrow">Archive</p>
+              <h2>Attempt History</h2>
             </div>
             <button type="button" class="btn danger" id="clear-history-btn">
-              Clear history
+              Clear History
             </button>
           </div>
           <div id="history-container" class="history-grid"></div>
         </section>
 
         <section id="feedback-view" class="view-section">
-          <div class="section-heading">
+          <div class="panel-heading">
             <div>
-              <p class="eyebrow">Diagnostic review</p>
-              <h3>Latest feedback</h3>
+              <p class="eyebrow">Report</p>
+              <h2>Latest Review</h2>
             </div>
             <div id="gradePill" class="grade-pill">No attempt yet</div>
           </div>
           <div id="summary-container" class="summary-panel empty">
-            Complete the exam to generate a detailed report.
+            Complete the assessment to generate a diagnostic report.
+          </div>
+          <div class="review-toolbar">
+            <button
+              class="filter-pill active"
+              type="button"
+              data-feedback-filter="all"
+            >
+              All
+            </button>
+            <button
+              class="filter-pill"
+              type="button"
+              data-feedback-filter="incorrect"
+            >
+              Incorrect
+            </button>
+            <button
+              class="filter-pill"
+              type="button"
+              data-feedback-filter="correct"
+            >
+              Correct
+            </button>
           </div>
           <div id="latest-feedback-container" class="feedback-list"></div>
         </section>
       </main>
-      <footer class="footer">
-        <p>
-          &copy; 2026 DecodeLabs. All rights reserved. | Built with Flask and
-          vanilla JavaScript. <a href="https://ahsanur-portfolio.netlify.app" target="_blank">Portfolio</a>
-        </p >
     </div>
 
     <script>
       const historyKey = "nexus_history";
-      let questionCount = 0;
+      const draftKey = "nexus_draft";
+      let questions = [];
+      let lastFeedback = [];
+      let timerStartedAt = Date.now();
+      let timerInterval;
 
       document.addEventListener("DOMContentLoaded", () => {
         bindNavigation();
-        bindForm();
+        bindControls();
         fetchQuestions();
         renderHistory();
+        startTimer();
       });
 
       function bindNavigation() {
         document.querySelectorAll(".nav-link").forEach((button) => {
-          button.addEventListener("click", () => switchView(button.dataset.view));
+          button.addEventListener("click", () =>
+            switchView(button.dataset.view),
+          );
         });
       }
 
-      function bindForm() {
-        document.getElementById("quiz-form").addEventListener("submit", submitExam);
-        document.getElementById("reset-btn").addEventListener("click", () => {
-          document.getElementById("quiz-form").reset();
-          updateCompletion();
-        });
+      function bindControls() {
+        document
+          .getElementById("quiz-form")
+          .addEventListener("submit", submitExam);
+        document
+          .getElementById("reset-btn")
+          .addEventListener("click", resetExam);
         document
           .getElementById("clear-history-btn")
           .addEventListener("click", clearHistory);
+        document
+          .getElementById("export-btn")
+          .addEventListener("click", exportHistory);
+        document
+          .getElementById("print-btn")
+          .addEventListener("click", () => window.print());
+        document
+          .getElementById("question-search")
+          .addEventListener("input", renderQuestions);
+        document
+          .getElementById("category-filter")
+          .addEventListener("change", renderQuestions);
+        document
+          .querySelectorAll("[data-feedback-filter]")
+          .forEach((button) => {
+            button.addEventListener("click", () => {
+              document
+                .querySelectorAll("[data-feedback-filter]")
+                .forEach((item) => {
+                  item.classList.toggle("active", item === button);
+                });
+              renderLatestFeedback(lastFeedback, button.dataset.feedbackFilter);
+            });
+          });
       }
 
       function switchView(viewId) {
@@ -188,9 +271,10 @@
         try {
           const response = await fetch("/api/questions");
           const payload = await response.json();
-          questionCount = payload.meta.total_questions;
+          questions = payload.questions;
           renderMeta(payload.meta);
-          renderQuestions(payload.questions);
+          renderQuestions();
+          restoreDraft();
         } catch (error) {
           document.getElementById("questions-container").innerHTML =
             '<div class="empty-state error">Unable to load questions. Check the Flask server.</div>';
@@ -198,86 +282,185 @@
       }
 
       function renderMeta(meta) {
-        document.getElementById("statQuestions").textContent = meta.total_questions;
+        document.getElementById("statQuestions").textContent =
+          meta.total_questions;
         document.getElementById("statPoints").textContent = meta.total_points;
-        document.getElementById("statCategories").textContent = meta.categories.length;
         document.getElementById("questionMeta").textContent =
           `${meta.total_questions} questions across ${meta.categories.join(", ")}`;
+
+        const filter = document.getElementById("category-filter");
+        filter.innerHTML =
+          '<option value="all">All categories</option>' +
+          meta.categories
+            .map(
+              (category) =>
+                `<option value="${escapeHtml(category)}">${escapeHtml(category)}</option>`,
+            )
+            .join("");
       }
 
-      function renderQuestions(questions) {
+      function renderQuestions() {
+        const searchTerm = document
+          .getElementById("question-search")
+          .value.trim()
+          .toLowerCase();
+        const category = document.getElementById("category-filter").value;
+        const savedAnswers = getCurrentAnswers();
+        const visibleQuestions = questions.filter((question) => {
+          const matchesCategory =
+            category === "all" || question.category === category;
+          const haystack =
+            `${question.text} ${question.category} ${question.difficulty}`.toLowerCase();
+          return matchesCategory && haystack.includes(searchTerm);
+        });
+
         const container = document.getElementById("questions-container");
-        container.innerHTML = questions
-          .map(
-            (question, index) => `
-              <article class="question-card">
-                <div class="question-topline">
-                  <span class="question-number">${String(index + 1).padStart(2, "0")}</span>
-                  <span>${question.category}</span>
-                  <span>${question.difficulty}</span>
+        if (!visibleQuestions.length) {
+          container.innerHTML =
+            '<div class="empty-state">No questions match this filter.</div>';
+          updateCompletion();
+          return;
+        }
+
+        container.innerHTML = visibleQuestions
+          .map((question, index) => {
+            const savedValue = savedAnswers[question.id] || "";
+
+            // Map the MCQ options to radio buttons
+            const optionsHtml = question.options
+              .map((opt, i) => {
+                const optId = `${question.id}_opt${i}`;
+                const isChecked = savedValue === opt ? "checked" : "";
+                return `
+                    <div class="mcq-option">
+                        <input type="radio" id="${optId}" name="${question.id}" value="${escapeAttribute(opt)}" ${isChecked}>
+                        <label for="${optId}">${escapeHtml(opt)}</label>
+                    </div>
+                `;
+              })
+              .join("");
+
+            return `
+              <article class="question-card mcq-card">
+                <div class="question-meta">
+                  <span>${String(index + 1).padStart(2, "0")}</span>
+                  <span>${escapeHtml(question.category)}</span>
+                  <span>${escapeHtml(question.difficulty)}</span>
                   <span>${question.points} pts</span>
                 </div>
-                <label for="${question.id}">${question.text}</label>
-                <input
-                  type="text"
-                  id="${question.id}"
-                  name="${question.id}"
-                  placeholder="Type your answer"
-                  required
-                  autocomplete="off"
-                />
+                <label class="q-text">${escapeHtml(question.text)}</label>
+                <div class="mcq-options-container">
+                    ${optionsHtml}
+                </div>
               </article>
-            `,
-          )
+            `;
+          })
           .join("");
 
-        container.querySelectorAll("input").forEach((input) => {
-          input.addEventListener("input", updateCompletion);
+        // Listen for changes on radio buttons instead of text inputs
+        container.querySelectorAll('input[type="radio"]').forEach((input) => {
+          input.addEventListener("change", () => {
+            saveDraft();
+            updateCompletion();
+          });
+        });
+        updateCompletion();
+      }
+
+      function getCurrentAnswers() {
+        const draft = {};
+        // Find all checked radio buttons inside the questions container
+        document
+          .querySelectorAll('#questions-container input[type="radio"]:checked')
+          .forEach((input) => {
+            draft[input.name] = input.value;
+          });
+        return draft;
+      }
+
+      function restoreDraft() {
+        const draft = JSON.parse(localStorage.getItem(draftKey) || "{}");
+        Object.entries(draft).forEach(([id, value]) => {
+          const radios = document.getElementsByName(id);
+          radios.forEach((radio) => {
+            if (radio.value === value) {
+              radio.checked = true;
+            }
+          });
         });
         updateCompletion();
       }
 
       function updateCompletion() {
-        const answers = Array.from(document.querySelectorAll(".question-card input"));
-        const answered = answers.filter((input) => input.value.trim()).length;
-        const percent = questionCount ? Math.round((answered / questionCount) * 100) : 0;
+        const answers = getCurrentAnswers();
+        const answered = questions.filter((question) =>
+          (answers[question.id] || "").trim(),
+        ).length;
+        const percent = questions.length
+          ? Math.round((answered / questions.length) * 100)
+          : 0;
         document.getElementById("answeredCount").textContent =
-          `${answered} of ${questionCount} answered`;
+          `${answered} of ${questions.length} answered`;
+        document.getElementById("statAnswered").textContent = `${percent}%`;
         document.getElementById("answeredBar").style.width = `${percent}%`;
       }
 
       async function submitExam(event) {
         event.preventDefault();
         const button = document.getElementById("submit-btn");
-        button.disabled = true;
-        button.textContent = "Evaluating...";
+        const durationSeconds = Math.floor(
+          (Date.now() - timerStartedAt) / 1000,
+        );
+        const answers = getCurrentAnswers();
+        const missing = questions.filter(
+          (question) => !(answers[question.id] || "").trim(),
+        );
 
-        const formData = new FormData(event.target);
-        const answers = Object.fromEntries(formData.entries());
+        if (missing.length) {
+          document.getElementById("question-search").value = "";
+          document.getElementById("category-filter").value = "all";
+          renderQuestions();
+          document.getElementById(missing[0].id)?.focus();
+          updateCompletion();
+          alert(
+            `Please answer all questions before submitting. Missing: ${missing.length}`,
+          );
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = "Evaluating";
 
         try {
           const response = await fetch("/api/evaluate", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
-            body: JSON.stringify(answers),
+            body: JSON.stringify({
+              answers,
+              duration_seconds: durationSeconds,
+            }),
           });
           const report = await response.json();
           saveReport(report);
           renderSummary(report);
-          renderLatestFeedback(report.feedback);
-          event.target.reset();
+          lastFeedback = report.feedback;
+          renderLatestFeedback(lastFeedback);
+          localStorage.removeItem(draftKey);
+          document.getElementById("quiz-form").reset();
+          timerStartedAt = Date.now();
           updateCompletion();
           switchView("feedback-view");
         } finally {
           button.disabled = false;
-          button.textContent = "Submit evaluation";
+          button.textContent = "Submit";
         }
       }
 
       function saveReport(report) {
-        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
+        const history = JSON.parse(localStorage.getItem(historyKey) || "[]");
         history.unshift({
           time: report.timestamp,
+          duration_seconds: report.duration_seconds,
           score: report.score,
           total: report.total,
           percentage: report.percentage,
@@ -285,36 +468,38 @@
           total_points: report.total_points,
           grade: report.grade,
         });
-        localStorage.setItem(historyKey, JSON.stringify(history.slice(0, 12)));
+        localStorage.setItem(historyKey, JSON.stringify(history.slice(0, 20)));
         renderHistory();
       }
 
       function renderHistory() {
-        const history = JSON.parse(localStorage.getItem(historyKey)) || [];
-        document.getElementById("statAttempts").textContent = history.length;
+        const history = JSON.parse(localStorage.getItem(historyKey) || "[]");
         document.getElementById("latestScore").textContent = history.length
           ? `${history[0].percentage}%`
           : "--";
 
         const container = document.getElementById("history-container");
         if (!history.length) {
-          container.innerHTML = '<div class="empty-state">No attempts saved yet.</div>';
+          container.innerHTML =
+            '<div class="empty-state">No attempts saved yet.</div>';
           return;
         }
 
         container.innerHTML = history
           .map(
-            (item) => `
+            (item, index) => `
               <article class="history-card">
-                <div>
-                  <span>${item.time}</span>
-                  <h4>${item.grade}</h4>
+                <div class="history-top">
+                  <span>Attempt ${index + 1}</span>
+                  <strong>${item.percentage}%</strong>
                 </div>
-                <strong>${item.score}/${item.total}</strong>
-                <p>${item.earned_points}/${item.total_points} points</p>
-                <div class="progress-bar">
-                  <div style="width: ${item.percentage}%"></div>
+                <h3>${escapeHtml(item.grade)}</h3>
+                <p>${escapeHtml(item.time)} | ${formatDuration(item.duration_seconds || 0)}</p>
+                <div class="history-score">
+                  <span>${item.score}/${item.total} correct</span>
+                  <span>${item.earned_points}/${item.total_points} pts</span>
                 </div>
+                <div class="progress-track small"><div style="width: ${item.percentage}%"></div></div>
               </article>
             `,
           )
@@ -322,55 +507,82 @@
       }
 
       function renderSummary(report) {
-        document.getElementById("gradePill").textContent = report.grade;
-        document.getElementById("gradePill").className = `grade-pill ${report.badge_class}`;
+        const gradePill = document.getElementById("gradePill");
+        gradePill.textContent = report.grade;
+        gradePill.className = `grade-pill ${report.badge_class}`;
 
         const categoryRows = Object.entries(report.categories)
           .map(([name, data]) => {
             const percent = Math.round((data.correct / data.total) * 100);
             return `
               <div class="category-row">
-                <span>${name}</span>
+                <span>${escapeHtml(name)}</span>
                 <strong>${data.correct}/${data.total}</strong>
-                <div class="mini-progress"><div style="width: ${percent}%"></div></div>
+                <div class="progress-track small"><div style="width: ${percent}%"></div></div>
               </div>
             `;
           })
           .join("");
 
-        document.getElementById("summary-container").classList.remove("empty");
-        document.getElementById("summary-container").innerHTML = `
-          <div class="summary-score">
-            <span>${report.percentage}%</span>
-            <div>
-              <h4>${report.score}/${report.total} correct</h4>
-              <p>${report.message}</p>
+        const weakText = report.weak_categories.length
+          ? `Priority review: ${report.weak_categories.map(escapeHtml).join(", ")}.`
+          : "No weak category detected in this attempt.";
+
+        const summary = document.getElementById("summary-container");
+        summary.classList.remove("empty");
+        summary.innerHTML = `
+          <div class="summary-grid">
+            <div class="score-orbit">
+              <span>${report.percentage}%</span>
+              <small>${report.score}/${report.total} correct</small>
+            </div>
+            <div class="summary-copy">
+              <h3>${escapeHtml(report.message)}</h3>
+              <p>${escapeHtml(report.recommendation)}</p>
+              <p>${weakText}</p>
             </div>
           </div>
           <div class="category-breakdown">${categoryRows}</div>
         `;
       }
 
-      function renderLatestFeedback(feedback) {
+      function renderLatestFeedback(feedback, filter = "all") {
         const container = document.getElementById("latest-feedback-container");
-        container.innerHTML = feedback
+        const filtered =
+          filter === "all"
+            ? feedback
+            : feedback.filter((item) => item.status === filter);
+        if (!filtered.length) {
+          container.innerHTML =
+            '<div class="empty-state">No feedback in this filter.</div>';
+          return;
+        }
+
+        container.innerHTML = filtered
           .map(
             (item) => `
               <article class="feedback-card ${item.status}">
                 <div class="feedback-head">
-                  <span>Q${item.q}</span>
-                  <strong>${item.status}</strong>
+                  <span>Q${item.q} | ${escapeHtml(item.category)}</span>
+                  <strong>${escapeHtml(item.status)}</strong>
                 </div>
-                <h4>${item.text}</h4>
+                <h3>${escapeHtml(item.text)}</h3>
                 <dl>
-                  <div><dt>Your answer</dt><dd>${item.user_answer}</dd></div>
-                  <div><dt>Correct answer</dt><dd>${item.correct_answer}</dd></div>
+                  <div><dt>Your answer</dt><dd>${escapeHtml(item.user_answer)}</dd></div>
+                  <div><dt>Correct answer</dt><dd>${escapeHtml(item.correct_answer)}</dd></div>
                 </dl>
-                <p>${item.explanation}</p>
+                <p>${escapeHtml(item.explanation)}</p>
               </article>
             `,
           )
           .join("");
+      }
+
+      function resetExam() {
+        localStorage.removeItem(draftKey);
+        document.getElementById("quiz-form").reset();
+        timerStartedAt = Date.now();
+        updateCompletion();
       }
 
       function clearHistory() {
@@ -378,10 +590,55 @@
         renderHistory();
         document.getElementById("gradePill").className = "grade-pill";
         document.getElementById("gradePill").textContent = "No attempt yet";
-        document.getElementById("summary-container").className = "summary-panel empty";
+        document.getElementById("summary-container").className =
+          "summary-panel empty";
         document.getElementById("summary-container").textContent =
-          "Complete the exam to generate a detailed report.";
+          "Complete the assessment to generate a diagnostic report.";
         document.getElementById("latest-feedback-container").innerHTML = "";
+        lastFeedback = [];
+      }
+
+      function exportHistory() {
+        const history = localStorage.getItem(historyKey) || "[]";
+        const blob = new Blob([history], { type: "application/json" });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement("a");
+        link.href = url;
+        link.download = "nexus-attempt-history.json";
+        link.click();
+        URL.revokeObjectURL(url);
+      }
+
+      function startTimer() {
+        clearInterval(timerInterval);
+        timerInterval = setInterval(() => {
+          const elapsed = Math.floor((Date.now() - timerStartedAt) / 1000);
+          document.getElementById("timer").textContent =
+            formatDuration(elapsed);
+        }, 1000);
+      }
+
+      function formatDuration(seconds) {
+        const minutes = Math.floor(seconds / 60);
+        const remainder = seconds % 60;
+        return `${String(minutes).padStart(2, "0")}:${String(remainder).padStart(2, "0")}`;
+      }
+
+      function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, (char) => {
+          const entities = {
+            "&": "&amp;",
+            "<": "&lt;",
+            ">": "&gt;",
+            '"': "&quot;",
+            "'": "&#39;",
+          };
+          return entities[char];
+        });
+      }
+
+      function escapeAttribute(value) {
+        return escapeHtml(value).replace(/`/g, "&#96;");
       }
     </script>
   </body>

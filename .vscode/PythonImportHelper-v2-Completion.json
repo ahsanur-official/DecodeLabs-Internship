@@ -426,20 +426,29 @@
         "documentation": {}
     },
     {
-        "label": "normalize_answer",
-        "kind": 2,
-        "importPath": "Week 4.app",
-        "description": "Week 4.app",
-        "peekOfCode": "def normalize_answer(value):\n    cleaned = (value or \"\").strip().lower()\n    return re.sub(r\"\\s+\", \" \", cleaned)\ndef safe_question(question):\n    return {\n        \"id\": question[\"id\"],\n        \"text\": question[\"text\"],\n        \"category\": question[\"category\"],\n        \"difficulty\": question[\"difficulty\"],\n        \"points\": question[\"points\"],",
-        "detail": "Week 4.app",
-        "documentation": {}
-    },
-    {
         "label": "safe_question",
         "kind": 2,
         "importPath": "Week 4.app",
         "description": "Week 4.app",
-        "peekOfCode": "def safe_question(question):\n    return {\n        \"id\": question[\"id\"],\n        \"text\": question[\"text\"],\n        \"category\": question[\"category\"],\n        \"difficulty\": question[\"difficulty\"],\n        \"points\": question[\"points\"],\n    }\n@app.route(\"/\")\ndef index():",
+        "peekOfCode": "def safe_question(question):\n    return {\n        \"id\": question[\"id\"],\n        \"text\": question[\"text\"],\n        \"options\": question.get(\"options\", []),  # Added options mapping\n        \"category\": question[\"category\"],\n        \"difficulty\": question[\"difficulty\"],\n        \"points\": question[\"points\"],\n    }\ndef normalize_answer(value):",
+        "detail": "Week 4.app",
+        "documentation": {}
+    },
+    {
+        "label": "normalize_answer",
+        "kind": 2,
+        "importPath": "Week 4.app",
+        "description": "Week 4.app",
+        "peekOfCode": "def normalize_answer(value):\n    cleaned = (value or \"\").strip().lower()\n    cleaned = re.sub(r\"[^\\w\\s]\", \"\", cleaned)\n    return re.sub(r\"\\s+\", \" \", cleaned)\ndef safe_int(value, default=0):\n    try:\n        return int(value)\n    except (TypeError, ValueError):\n        return default\n@app.route(\"/\")",
+        "detail": "Week 4.app",
+        "documentation": {}
+    },
+    {
+        "label": "safe_int",
+        "kind": 2,
+        "importPath": "Week 4.app",
+        "description": "Week 4.app",
+        "peekOfCode": "def safe_int(value, default=0):\n    try:\n        return int(value)\n    except (TypeError, ValueError):\n        return default\n@app.route(\"/\")\ndef index():\n    return render_template(\"index.html\")\n@app.route(\"/api/questions\", methods=[\"GET\"])\ndef get_questions():",
         "detail": "Week 4.app",
         "documentation": {}
     },
@@ -466,7 +475,7 @@
         "kind": 2,
         "importPath": "Week 4.app",
         "description": "Week 4.app",
-        "peekOfCode": "def evaluate():\n    user_data = request.get_json(silent=True) or {}\n    score = 0\n    earned_points = 0\n    total = len(QUESTIONS)\n    total_points = sum(question[\"points\"] for question in QUESTIONS)\n    feedback = []\n    categories = {}\n    for index, question in enumerate(QUESTIONS, start=1):\n        raw_input = user_data.get(question[\"id\"], \"\")",
+        "peekOfCode": "def evaluate():\n    user_data = request.get_json(silent=True) or {}\n    answers = user_data.get(\"answers\", user_data)\n    duration_seconds = safe_int(user_data.get(\"duration_seconds\"))\n    score = 0\n    earned_points = 0\n    total = len(QUESTIONS)\n    total_points = sum(question[\"points\"] for question in QUESTIONS)\n    feedback = []\n    categories = {}",
         "detail": "Week 4.app",
         "documentation": {}
     },
@@ -475,7 +484,7 @@
         "kind": 5,
         "importPath": "Week 4.app",
         "description": "Week 4.app",
-        "peekOfCode": "app = Flask(__name__)\nQUESTIONS = [\n    {\n        \"id\": \"q1\",\n        \"text\": \"What is the capital city of France?\",\n        \"valid_answers\": [\"paris\"],\n        \"category\": \"Geography\",\n        \"difficulty\": \"Easy\",\n        \"points\": 10,\n        \"explanation\": \"Paris is the capital and largest city of France.\",",
+        "peekOfCode": "app = Flask(__name__)\nQUESTIONS = [\n    {\n        \"id\": \"q1\",\n        \"text\": \"What is the capital city of France?\",\n        \"options\": [\"London\", \"Berlin\", \"Paris\", \"Madrid\"],\n        \"valid_answers\": [\"paris\"],\n        \"category\": \"Geography\",\n        \"difficulty\": \"Easy\",\n        \"points\": 10,",
         "detail": "Week 4.app",
         "documentation": {}
     },
@@ -484,7 +493,7 @@
         "kind": 5,
         "importPath": "Week 4.app",
         "description": "Week 4.app",
-        "peekOfCode": "QUESTIONS = [\n    {\n        \"id\": \"q1\",\n        \"text\": \"What is the capital city of France?\",\n        \"valid_answers\": [\"paris\"],\n        \"category\": \"Geography\",\n        \"difficulty\": \"Easy\",\n        \"points\": 10,\n        \"explanation\": \"Paris is the capital and largest city of France.\",\n    },",
+        "peekOfCode": "QUESTIONS = [\n    {\n        \"id\": \"q1\",\n        \"text\": \"What is the capital city of France?\",\n        \"options\": [\"London\", \"Berlin\", \"Paris\", \"Madrid\"],\n        \"valid_answers\": [\"paris\"],\n        \"category\": \"Geography\",\n        \"difficulty\": \"Easy\",\n        \"points\": 10,\n        \"explanation\": \"Paris is the capital and largest city of France.\",",
         "detail": "Week 4.app",
         "documentation": {}
     }
